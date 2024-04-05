@@ -1,0 +1,137 @@
+﻿@page "/water-tower-pressure"
+@rendermode InteractiveServer
+<PageTitle>Water Tower Pressure Calculator</PageTitle>
+
+<h3>Water Tower Pressure Calculator</h3>
+<div class="main-container">
+    <div class="calculator">
+        <div class="form-group">
+            <label for="gravity">Gravitational Acceleration (g, m/s<sup>2</sup>):</label>
+            <input @bind="gravity" @oninput="OnInput" type="number" class="form-control @GetInputClass(gravity)" id="gravity" disabled="@gravityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="density">Density (ρ, kg/m<sup>3</sup>):</label>
+            <input @bind="density" @oninput="OnInput" type="number" class="form-control @GetInputClass(density)" id="density" disabled="@densityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="height">Height (h, m):</label>
+            <input @bind="height" @oninput="OnInput" type="number" class="form-control @GetInputClass(height)" id="height" disabled="@heightDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="pressureResult">Pressure (p, Pa):</label>
+            <input @bind="pressure" @oninput="OnInput" type="number" class="form-control @GetInputClass(pressure)" id="pressure" disabled="@pressureDisabled" />
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" @onclick="ValidateAndCalculate">Calculate</button>
+            <button class="btn btn-secondary" @onclick="ClearFields">Clear</button>
+        </div>
+    </div>
+    <div class="formula-image">
+        <img src="https://naurok.com.ua/uploads/files/843004/156222/168858_html/images/156222.015.png">
+    </div>
+</div>
+
+@code {
+    private double? density = 997;
+    private double? gravity = 9.8;
+    private double? height;
+    private double? pressure;
+
+    private bool gravityDisabled = false;
+    private bool densityDisabled = false;
+    private bool heightDisabled = false;
+    private bool pressureDisabled = false;
+    private bool missingInput = false;
+
+    private void OnInput()
+    {
+        missingInput = false;
+
+        UpdateFieldStates();
+    }
+    private void ValidateAndCalculate()
+    {
+        int filledFieldsCount = (density.HasValue ? 1 : 0) +
+                                (gravity.HasValue ? 1 : 0) +
+                                (height.HasValue ? 1 : 0) +
+                                (pressure.HasValue ? 1 : 0);
+
+
+        if (filledFieldsCount < 3)
+        {
+            missingInput = true;
+        }
+        else
+        {
+            missingInput = false;
+            Calculate();
+        }
+    }
+    private void Calculate()
+    {
+        UpdateFieldStates();
+
+        int filledFieldsCount = (density.HasValue ? 1 : 0) + (gravity.HasValue ? 1 : 0) + (height.HasValue ? 1 : 0) + (pressure.HasValue ? 1 : 0);
+
+        if (filledFieldsCount == 3)
+        {
+            if (!pressure.HasValue && density.HasValue && height.HasValue && gravity.HasValue)
+            {
+                pressure = density.Value * gravity.Value * height.Value;
+            }
+            else if (!height.HasValue && density.HasValue && pressure.HasValue && gravity.HasValue)
+            {
+                height = pressure.Value / (density.Value * gravity.Value);
+            }
+            else if (!density.HasValue && pressure.HasValue && height.HasValue && gravity.HasValue)
+            {
+                density = pressure.Value / (gravity.Value * height.Value);
+            }
+            else if (density.HasValue && pressure.HasValue && height.HasValue && !gravity.HasValue)
+            {
+                gravity = pressure.Value / (density.Value * height.Value);
+            }
+        }
+        else if (filledFieldsCount == 4)
+        {
+            pressure = density.Value * gravity.Value * height.Value;
+        }
+
+    }
+    private void ClearFields()
+    {
+        density = 997;
+        gravity = 9.8;
+        height = null;
+        pressure = null;
+        missingInput = false;
+
+
+        densityDisabled = false;
+        heightDisabled = false;
+        pressureDisabled = false;
+        gravityDisabled = false;
+
+        UpdateFieldStates();
+    }
+
+    private void UpdateFieldStates()
+    {
+        int filledFieldsCount = (density.HasValue ? 1 : 0) +
+                                 (height.HasValue ? 1 : 0) +
+                                 (gravity.HasValue ? 1 : 0) +
+                                 (pressure.HasValue ? 1 : 0);
+
+        densityDisabled = !density.HasValue && filledFieldsCount == 3;
+        heightDisabled = !height.HasValue && filledFieldsCount == 3;
+        pressureDisabled = !pressure.HasValue && filledFieldsCount == 3;
+        gravityDisabled = !gravity.HasValue && filledFieldsCount == 3;
+    }
+    private string GetInputClass(double? fieldValue)
+    {
+        return fieldValue.HasValue || !missingInput ? "" : "input-error";
+    }
+}

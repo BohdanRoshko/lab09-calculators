@@ -1,0 +1,135 @@
+﻿@page "/elevated-water-potentialon"
+@rendermode InteractiveServer
+<PageTitle>Elevated Water Potential Calculator</PageTitle>
+<h3>Elevated Water Potential Calculator</h3>
+<div class="main-container">
+    <div class="calculator">
+        <div class="form-group">
+            <label for="gravity">Gravitational Acceleration (g, m/s<sup>2</sup>):</label>
+            <input @bind="gravity" @oninput="OnInput" type="number" class="form-control @GetInputClass(gravity)" id="gravity" disabled="@gravityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="density">Density (ρ, kg/m<sup>3</sup>):</label>
+            <input @bind="density" @oninput="OnInput" type="number" class="form-control @GetInputClass(density)" id="density" disabled="@densityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="volume">Volume (m<sup>3</sup>):</label>
+            <input @bind="volume" @oninput="OnInput" type="number" class="form-control @GetInputClass(volume)" id="volume" disabled="@volumeDisabled" />
+        </div>
+
+
+        <div class="form-group">
+            <label for="height">Height (h, m):</label>
+            <input @bind="height" @oninput="OnInput" type="number" class="form-control @GetInputClass(height)" id="height" disabled="@heightDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="weight">Weight (W, N):</label>
+            <input @bind="weight" @oninput="OnInput" type="number" class="form-control @GetInputClass(weight)" id="weight" disabled="@weightDisabled" />
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" @onclick="ValidateAndCalculate">Calculate</button>
+            <button class="btn btn-secondary" @onclick="ClearFields">Clear</button>
+        </div>
+    </div>
+    <div class="formula-image">
+        <img src="https://studfile.net/html/2706/1109/html_SjsZdP0jlu.4f3p/img-jBtmjI.png">
+    </div>
+</div>
+
+
+@code {
+    private double? density = 997;
+    private double? gravity = 9.8;
+    private double? volume;
+    private double? height;
+    private double? weight;
+
+    private bool densityDisabled = false;
+    private bool volumeDisabled = false;
+    private bool gravityDisabled = false;
+    private bool heightDisabled = false;
+    private bool weightDisabled = false;
+    private bool missingInput = false;
+
+    private void OnInput()
+    {
+        missingInput = false;
+        UpdateFieldStates();
+    }
+    private void ValidateAndCalculate()
+    {
+        int filledFieldsCount = (density.HasValue ? 1 : 0) +
+                                (volume.HasValue ? 1 : 0) +
+                                (gravity.HasValue ? 1 : 0) +
+                                (height.HasValue ? 1 : 0) +
+                                (weight.HasValue ? 1 : 0);
+
+        if (filledFieldsCount < 4)
+        {
+            missingInput = true;
+        }
+        else
+        {
+            missingInput = false;
+            Calculate();
+        }
+    }
+
+    private void Calculate()
+    {
+        if (density.HasValue && volume.HasValue && gravity.HasValue && height.HasValue)
+        {
+            weight = density.Value * volume.Value * gravity.Value * height.Value;
+        }
+        else if (weight.HasValue && volume.HasValue && gravity.HasValue && height.HasValue)
+        {
+            density = weight.Value / (volume.Value * gravity.Value * height.Value);
+        }
+        else if (weight.HasValue && density.HasValue && gravity.HasValue && height.HasValue)
+        {
+            volume = weight.Value / (density.Value * gravity.Value * height.Value);
+        }
+        else if (weight.HasValue && density.HasValue && volume.HasValue && height.HasValue)
+        {
+            gravity = weight.Value / (density.Value * volume.Value * height.Value);
+        }
+        else if (weight.HasValue && density.HasValue && volume.HasValue && gravity.HasValue)
+        {
+            height = weight.Value / (density.Value * volume.Value * gravity.Value);
+        }
+    }
+
+    private void ClearFields()
+    {
+        density = 997;
+        gravity = 9.8;
+        volume = null;
+        height = null;
+        weight = null;
+        missingInput = false;
+
+        UpdateFieldStates();
+    }
+
+    private void UpdateFieldStates()
+    {
+        int filledFieldsCount = (density.HasValue ? 1 : 0) +
+                                 (volume.HasValue ? 1 : 0) +
+                                 (gravity.HasValue ? 1 : 0) +
+                                 (height.HasValue ? 1 : 0) +
+                                 (weight.HasValue ? 1 : 0);
+
+        densityDisabled = !density.HasValue && filledFieldsCount == 4;
+        volumeDisabled = !volume.HasValue && filledFieldsCount == 4;
+        gravityDisabled = !gravity.HasValue && filledFieldsCount == 4;
+        heightDisabled = !height.HasValue && filledFieldsCount == 4;
+        weightDisabled = !weight.HasValue && filledFieldsCount == 4;
+    }
+    private string GetInputClass(double? fieldValue)
+    {
+        return fieldValue.HasValue || !missingInput ? "" : "input-error";
+    }
+}

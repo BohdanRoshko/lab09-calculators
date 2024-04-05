@@ -1,0 +1,132 @@
+﻿@page "/projectile-max-height"
+@rendermode InteractiveServer
+<PageTitle>Projectile Maximum Height Calculator</PageTitle>
+
+<h3>Projectile Maximum Height Calculator</h3>
+<div class="main-container">
+    <div class="calculator">
+        <div class="form-group">
+            <label for="gravity">Gravitational Acceleration (g, m/s<sup>2</sup>):</label>
+            <input @bind="gravity" @oninput="OnInput" type="number" class="form-control" id="gravity" disabled="@gravityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="velocity">Initial Velocity (V<sub>0</sub>, m/s):</label>
+            <input @bind="velocity" @oninput="OnInput" type="number" class="form-control" id="velocity" disabled="@velocityDisabled" />
+        </div>
+
+        <div class="form-group">
+            <label for="angle">Angle of Projection (α, degrees):</label>
+            <input @bind="angle" @oninput="OnInput" type="number" class="form-control" id="angle" disabled="@angleDisabled" />
+        </div>  
+
+        <div class="form-group">
+            <label for="maxHeight">Maximum Height (h<sub>max</sub>, m):</label>
+            <input @bind="maxHeight" @oninput="OnInput" type="number" class="form-control" id="maxHeight" disabled="@maxHeightDisabled" />
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" @onclick="Calculate">Calculate</button>
+            <button class="btn btn-secondary" @onclick="ClearFields">Clear</button>
+        </div>
+        
+    </div>
+    <div class="formula-image">
+        <img src="https://disted.edu.vn.ua/media/images/sapsay/fiz_10/u16.files/image021.jpg">
+    </div>
+</div>
+
+@code {
+    private double? gravity = 9.8;
+    private double? velocity;
+    private double? angle; // degrees
+    private double? maxHeight;
+
+    private bool velocityDisabled = false;
+    private bool angleDisabled = false;
+    private bool gravityDisabled = false;
+    private bool maxHeightDisabled = false; 
+    private bool missingInput = false;
+
+    private void OnInput()
+    {
+        missingInput = false;
+        UpdateFieldStates();
+    }
+    private void ValidateAndCalculate()
+    {
+        int filledFieldsCount = (velocity.HasValue ? 1 : 0) +
+                                (angle.HasValue ? 1 : 0) +
+                                (gravity.HasValue ? 1 : 0) +
+                                (maxHeight.HasValue ? 1 : 0);
+
+        if (filledFieldsCount < 3)
+        {
+            missingInput = true;
+        }
+        else
+        {
+            missingInput = false;
+            Calculate();
+        }
+    }
+    private void Calculate()
+    {
+        UpdateFieldStates();
+
+
+        int filledFieldsCount = (velocity.HasValue ? 1 : 0) + (angle.HasValue ? 1 : 0) + (gravity.HasValue ? 1 : 0) + (maxHeight.HasValue ? 1 : 0);
+        double angleRadians = angle.HasValue ? (Math.PI / 180) * angle.Value : 0;
+
+        if (filledFieldsCount == 3)
+        {
+            if (velocity.HasValue && angle.HasValue && gravity.HasValue && !maxHeight.HasValue)
+            {
+                maxHeight = (Math.Pow(velocity.Value * Math.Sin(angleRadians), 2)) / (2 * gravity.Value);
+            }
+            else if (maxHeight.HasValue && angle.HasValue && gravity.HasValue && !velocity.HasValue)
+            {
+                velocity = Math.Sqrt((2 * gravity.Value * maxHeight.Value) / Math.Pow(Math.Sin(angleRadians), 2));
+            }
+            else if (maxHeight.HasValue && velocity.HasValue && gravity.HasValue && !angle.HasValue)
+            {
+                angle = (180 / Math.PI) * Math.Asin(Math.Sqrt((2 * gravity.Value * maxHeight.Value) / Math.Pow(velocity.Value, 2)));
+            }
+            else if (maxHeight.HasValue && velocity.HasValue && angle.HasValue && !gravity.HasValue)
+            {
+                gravity = (Math.Pow(velocity.Value * Math.Sin(angleRadians), 2)) / (2 * maxHeight.Value);
+            }
+        }
+        else if (filledFieldsCount == 4)
+        {
+            maxHeight = (Math.Pow(velocity.Value * Math.Sin(angleRadians), 2)) / (2 * gravity.Value);
+        }        
+    }
+
+    private void ClearFields()
+    {
+        gravity = 9.8;
+        velocity = null;
+        angle = null;
+        maxHeight = null;
+
+        missingInput = false;
+        UpdateFieldStates(); 
+    }
+
+    private void UpdateFieldStates()
+    {
+        int filledFieldsCount = (velocity.HasValue ? 1 : 0) +
+                                 (angle.HasValue ? 1 : 0) +
+                                 (gravity.HasValue ? 1 : 0) +
+                                 (maxHeight.HasValue ? 1 : 0);
+
+        velocityDisabled = !velocity.HasValue && filledFieldsCount == 3;
+        angleDisabled = !angle.HasValue && filledFieldsCount == 3;
+        gravityDisabled = !gravity.HasValue && filledFieldsCount == 3;
+        maxHeightDisabled = !maxHeight.HasValue && filledFieldsCount == 3; 
+    }
+    private string GetInputClass(double? fieldValue)
+    {
+        return fieldValue.HasValue || !missingInput ? "" : "input-error";
+    }
+}

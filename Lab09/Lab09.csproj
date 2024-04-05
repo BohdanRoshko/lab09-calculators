@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
+	<ItemGroup>
+		<Watch Include="**\*.razor" />
+	</ItemGroup>
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
@@ -9,8 +11,5 @@
 	<ItemGroup>
 		<PackageReference Include="Blazor.Bootstrap" Version="2.1.0" />
 	</ItemGroup>
-	<PropertyGroup>
-		<RunAOTCompilation>true</RunAOTCompilation>
-		<WasmStripILAfterAOT>true</WasmStripILAfterAOT>
-	</PropertyGroup>
+	
 </Project>

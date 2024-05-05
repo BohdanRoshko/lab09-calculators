@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">Click here</a>
+        <a class="navbar-brand" href="/">Home</a>
     </div>
 </div>
 
@@ -8,6 +8,11 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/Dashboard">
+                <span style="padding-right:6px" aria-hidden="true"><Icon Name="IconName.Activity" /></span> Dashboard
+            </NavLink>
+        </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="projectile-max-height">
                 <span style="padding-right:6px" aria-hidden="true"><Icon Name="IconName.ChevronBarUp" /></span> Max Projectile Height

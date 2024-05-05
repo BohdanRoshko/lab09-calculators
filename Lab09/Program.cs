@@ -1,3 +1,4 @@
+using Data;
 using Lab09.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddControllersWithViews();
+builder.Services.AddServerSideBlazor();
+
+//Data layer
+builder.Services.AddSingleton<IDataAccess, DataAccess>();
+
 builder.Services.AddBlazorBootstrap();
 var app = builder.Build();
 
@@ -21,6 +28,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapControllers();  // Map controller routes
+app.MapBlazorHub();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

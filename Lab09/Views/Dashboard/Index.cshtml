@@ -1,7 +1,82 @@
-﻿@{
+﻿@using Data.Models
+@{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Welcome to the Home Page</h1>
-<p>This page is rendered by an MVC controller.</p>
+@model List<Operation>
+
+<h1>Dashboard</h1>
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="table-container">
+        <table class="material-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var operation in Model)
+                {
+                    <tr>
+                        <td>@operation.Name</td>
+                        <td>@operation.CreatedAt.ToString("HH:mm yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>No operations found.</p>
+}
+
+
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .material-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: Roboto, sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+            .material-table thead tr {
+            background-color: #3F51B5;
+                color: #ffffff;
+                text-align: left;
+            }
+
+            .material-table th,
+            .material-table td {
+                padding: 12px 15px;
+            }
+
+            .material-table tbody tr {
+                border-bottom: 1px solid #dddddd;
+            }
+
+                .material-table tbody tr:nth-of-type(even) {
+                    background-color: #f3f3f3;
+                }
+
+                .material-table tbody tr:last-of-type {
+                border-bottom: 2px solid #3F51B5;
+                }
+
+                .material-table tbody tr.active-row {
+                    font-weight: bold;
+                color: #3F51B5;
+                }
+    </style>
+

@@ -1,5 +1,9 @@
 ﻿@page "/elevated-water-potentialon"
+@using Data.Models
+@using Lab09.Services
 @rendermode InteractiveServer
+@inject ISaveOperation OperationsService
+
 <PageTitle>Elevated Water Potential Calculator</PageTitle>
 <h3>Elevated Water Potential Calculator</h3>
 <div class="main-container">
@@ -78,7 +82,7 @@
         }
     }
 
-    private void Calculate()
+    private async void Calculate()
     {
         if (density.HasValue && volume.HasValue && gravity.HasValue && height.HasValue)
         {
@@ -100,6 +104,13 @@
         {
             height = weight.Value / (density.Value * volume.Value * gravity.Value);
         }
+
+        var operation = new Operation()
+        {
+                Name = "Elevated Water Potential",
+                CreatedAt = DateTime.Now,
+        };
+        await OperationsService.AddOperationAsync(operation);
     }
 
     private void ClearFields()

@@ -13,9 +13,9 @@ public class DashboardController : Controller
     }
     // GET
     [Route("/Dashboard")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        _getLatestOperationsService.GetOperations(10);
-        return View();
+        var operations = await _getLatestOperationsService.GetOperationsAsync(10);
+        return View(operations);
     }
 }

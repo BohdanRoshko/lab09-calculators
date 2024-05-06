@@ -1,39 +1,71 @@
-﻿<div class="page">
+﻿<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .page {
+        display: flex;
+        height: 100vh; /* Full height */
+    }
+
+    .sidebar {
+        width: 200px; /* Same as navbar width */
+        background-color: #3F51B5;
+    }
+
+    .navbar {
+        width: 100%;
+        color: white;
+        padding: 20px;
+    }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            transition: background 0.3s;
+        }
+
+            .navbar a:hover {
+                background-color: #303F9F;
+            }
+
+    main {
+        flex-grow: 1; /* Take the remaining width */
+        background-color: #f4f4f4; /* Light grey background */
+        overflow-y: auto; /* Add scroll to main content only */
+    }
+
+    .top-row {
+        background-color: #ffffff; /* Background color for top row */
+        padding: 10px 20px; /* Padding for top row */
+        border-bottom: 1px solid #cccccc; /* Bottom border for top row */
+    }
+
+    .container {
+        padding: 20px; /* Padding for container */
+    }
+</style>
+<div class="page">
     <div class="sidebar" style="width: 15%">
-        <div class="top-row ps-3 navbar navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">Home</a>
-            </div>
-        </div>
+        
 
-        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-            <nav class="flex-column">
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="projectile-max-height">
-                        <span style="padding-right:6px" aria-hidden="true"><Icon Name="IconName.ChevronBarUp" /></span> Max Projectile Height
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="water-tower-pressure">
-                        <span style="padding-right:6px" aria-hidden="true"><Icon Name="IconName.BoxArrowInDown" /></span> Water Tower Pressure
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="elevated-water-potentialon">
-                        <span style="padding-right:6px" aria-hidden="true"><Icon Name="IconName.BarChartSteps" /></span> Elevated Water Potential
-                    </NavLink>
-                </div>
-            </nav>
+        <div class="navbar">
+            <a href="/"><h2>Home</h2></a>
+            <a href="/projectile-max-height">Max Projectile Height</a>
+            <a href="/water-tower-pressure">Water Tower Pressure</a>
+            <a href="/elevated-water-potentialon">Elevated Water Potential</a>
         </div>
     </div>
 
     <main>
         <div class="top-row px-4">
-            <a href="https://github.com/BohdanRoshko/lab09-calculators" target="_blank">Github</a>
+            <a href="https://github.com/BohdanRoshko/lab09-calculators" target="_blank" style="margin-left: 95%;">Github</a>
         </div>
         <div class="container">
             @RenderBody()  

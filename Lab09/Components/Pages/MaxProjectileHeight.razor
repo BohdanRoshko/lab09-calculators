@@ -1,5 +1,9 @@
 ﻿@page "/projectile-max-height"
+@using Data.Models
+@using Lab09.Services
 @rendermode InteractiveServer
+@inject ISaveOperation OperationsService
+
 <PageTitle>Projectile Maximum Height Calculator</PageTitle>
 
 <h3>Projectile Maximum Height Calculator</h3>
@@ -69,7 +73,7 @@
             Calculate();
         }
     }
-    private void Calculate()
+    private async void Calculate()
     {
         UpdateFieldStates();
 
@@ -100,6 +104,12 @@
         {
             maxHeight = (Math.Pow(velocity.Value * Math.Sin(angleRadians), 2)) / (2 * gravity.Value);
         }        
+        var operation = new Operation()
+            {
+                Name = "Projectile Maximum Height",
+                CreatedAt = DateTime.Now,
+            };
+        await OperationsService.AddOperationAsync(operation);
     }
 
     private void ClearFields()

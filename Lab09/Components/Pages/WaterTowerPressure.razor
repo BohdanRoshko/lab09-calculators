@@ -1,5 +1,9 @@
 ﻿@page "/water-tower-pressure"
+@using Data.Models
+@using Lab09.Services
 @rendermode InteractiveServer
+@inject ISaveOperation OperationsService
+
 <PageTitle>Water Tower Pressure Calculator</PageTitle>
 
 <h3>Water Tower Pressure Calculator</h3>
@@ -70,7 +74,7 @@
             Calculate();
         }
     }
-    private void Calculate()
+    private async void Calculate()
     {
         UpdateFieldStates();
 
@@ -99,6 +103,13 @@
         {
             pressure = density.Value * gravity.Value * height.Value;
         }
+
+        var operation = new Operation()
+            {
+                Name = "Water Tower Pressure",
+                CreatedAt = DateTime.Now,
+            };
+        await OperationsService.AddOperationAsync(operation);
 
     }
     private void ClearFields()

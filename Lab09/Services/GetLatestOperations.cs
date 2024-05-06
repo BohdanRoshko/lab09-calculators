@@ -1,18 +1,24 @@
 ﻿using Data;
 using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lab09.Services;
 
 public class GetLatestOperations : IGetLatestOperations
 {
-    private readonly IDataAccess _dataAccess;
+    public Context _context { get; }
 
-    public GetLatestOperations(IDataAccess dataAccess)
+    public GetLatestOperations(Context context)
     {
-        _dataAccess = dataAccess;
+        _context = context;
     }
-    public Task<List<Operation>> GetOperations(int count)
+
+
+    public async Task<List<Operation>> GetOperationsAsync(int count)
     {
-        throw new NotImplementedException();
+        var operations = await _context.Operations
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(count).ToListAsync();
+        return operations;
     }
 }
